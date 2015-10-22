@@ -5,5 +5,5 @@ from . import cook
 
 @cook.route('/')
 def index():
-    return 'hello cook!'
+    return 'hello chef!'
 

@@ -1,7 +1,5 @@
 # -*- coding:utf-8 -*-
 
-__author__ = 'Liu Lixiang'
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import config
@@ -18,8 +16,8 @@ def create_app(config_name):
     from .client import client as client_blueprint
     app.register_blueprint(client_blueprint)
 
-    from .cook import cook as cook_blueprint
-    app.register_blueprint(cook_blueprint, url_prefix='/cook')
+    from .chef import cook as cook_blueprint
+    app.register_blueprint(cook_blueprint, url_prefix='/chef')
 
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
