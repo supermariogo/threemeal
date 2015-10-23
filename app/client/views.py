@@ -6,4 +6,4 @@ from . import client
 
 @client.route('/')
 def index():
-    return render_template('base.html')
+    return render_template('index.html')
