@@ -8,6 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_security import UserMixin, RoleMixin
 from flask_security.core import AnonymousUserMixin
+from sqlalchemy import func
 
 from . import db, login_manager
 
@@ -110,6 +111,9 @@ class Meal(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(128))
     description = db.Column(db.Text)
+    zip_code = db.Column(db.String(20))
+    status = db.Column(db.Enum('SELECTED', 'UNSELECTED'))
+    date = db.Column(db.Date, default=func.now())
     chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

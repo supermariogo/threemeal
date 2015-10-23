@@ -28,8 +28,8 @@ def create_app(config_name):
     from .client import client as client_blueprint
     app.register_blueprint(client_blueprint)
 
-    from .chef import cook as cook_blueprint
-    app.register_blueprint(cook_blueprint, url_prefix='/chef')
+    from .chef import chef as chef_blueprint
+    app.register_blueprint(chef_blueprint, url_prefix='/chef')
 
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')

@@ -1,7 +1,7 @@
 {% import "snippets/macros.html" as macros %}
 <html>
 <head>
-  <title>Welcome to xueba carry</title>
+  <title>{% block title %}欢迎来到每日三餐{%endblock%}</title>
   <!-- Meta -->
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,7 @@
   <!-- Latest compiled and minified CSS -->
   <!-- jQuery library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.15.35/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
   <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
@@ -53,6 +53,9 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li><a href="/">首页</a></li>
+          <li><a href="#">今日推荐</a></li>
+          <li><a href="#">菜肴发布</a></li>
+          <li><a href="#">订单查看</a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">

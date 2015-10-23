@@ -2,6 +2,6 @@
 
 from flask import Blueprint
 
-cook = Blueprint('chef', __name__)
+chef = Blueprint('chef', __name__)
 
 from . import views
