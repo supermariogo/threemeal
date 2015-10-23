@@ -1,0 +1,26 @@
+{% macro flash_message(type, alert_type) %}
+{% with messages = get_flashed_messages(category_filter=[type]) %}
+{% if messages %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+    {% for message in messages %}
+    <div class="alert {{alert_type}} " width="40%" role="alert"> 
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{ message }} </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endwith %}
+{% endmacro %}
+
+{% macro category_list(categories, title) %}
+<div class="panel panel-default">
+  <div class="panel-heading">{{title}}</div>
+  <div class="panel-body">
+    {% for category in categories %}
+      <a class="btn btn-success btn-xs" href="{{url_for('category_name', name=category.name)}}">{{category.name}}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}

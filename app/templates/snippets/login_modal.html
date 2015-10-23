@@ -1,0 +1,55 @@
+  <div class="modal fade in" id="login-panel" tabindex="-1" role="dialog" aria-labelledby="login-title" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title" id="login-title">登录</h4>
+              </div>
+              <div class="modal-body">  
+                <div class="container-fluid">
+                {% import "snippets/macros.html" as macros %}
+                {{ macros.flash_message("login_form_error", "alert-warning") }}
+                <div class="row">
+                  <span class="help-block user-pw-input" >
+                    <a aria-hidden="true" data-dismiss="modal"  data-toggle="modal" href="#register-panel">还没有账号?</a>
+                  </span>
+                </div>
+                <div class="row">
+                 <form class="form-horizontal" role="form" method="post" action="/login">
+                     <fieldset>
+                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                         <div class="input-group user-pw-input">
+                             <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i>
+                             </span>
+                             <input id="login-username" type="text" class="form-control" name="email" required="required" value="" placeholder="邮箱">
+                         </div>
+                         <div class="input-group user-pw-input">
+                             <span class="input-group-addon"> <i class="glyphicon glyphicon-lock"></i>
+                             </span>
+                             <input type="password" class="form-control" name="password" required="required" placeholder="密码">
+                         </div>
+                 
+                         <div class="input-group user-pw-input" >
+                             <span class="button-checkbox">
+                                 <input type="checkbox" class="iCheck" checked="true" name="remember_me" checked>记住登录状态</span>
+                                  <div class="pull-right"><a href="#">忘记密码?</a></div>
+                         </div>
+                         <div class="form-group">
+                            <div class="controls user-pw-btn">
+                              <button class="btn btn-danger form-control">登录</button>
+                            </div>
+                         </div>
+                 
+                     </fieldset>
+                 </form> 
+                </div>
+
+                </div>
+                <!-- end modal-body -->
+             </div>
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
