@@ -47,6 +47,8 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
+    meals = db.relationship('Meal', backref="chef", lazy='dynamic')
+
     @property
     def password(self):
         # raise AttributeError('password is not a readable attribute')
@@ -102,3 +104,13 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Meal(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(128))
+    description = db.Column(db.Text)
+    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Meal %r>' % self.name
