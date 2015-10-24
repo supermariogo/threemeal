@@ -4,6 +4,14 @@ from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired, Length
 
 
+class MenuForm(Form):
+    zip_code = StringField('Address',
+                          validators=[DataRequired(),
+                                      Length(1, 10, message=u'地址在1-10个字符之间')
+                                      ]
+                          )
+
+
 class ClientOrderForm(Form):
     address = StringField('Address',
                           validators=[DataRequired(),

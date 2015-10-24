@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">顾客后台</div>
+        <ul class="list-group">
+          <li class="list-group-item"><a href="{{url_for('client.orders', order_status='all')}}">所有订单</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="col-md-10">
+     {% block admin_content %} {% endblock %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

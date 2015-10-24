@@ -1,1 +1,16 @@
 {% extends "base.html" %}
+
+{%block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form action="" method="post" accept-charset="utf-8">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="zip_code">Zip Codes:</label>
+                {{ form.zip_code(class="form-control", placehold='Zip Code')}}
+            </div>
+            <button type="submit" class="btn btn-primary"> 保存</button>
+        </form>
+    </div>
+</div>
+{%endblock%}

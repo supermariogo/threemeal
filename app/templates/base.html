@@ -66,6 +66,7 @@
               {% if current_user.has_role('superuser') %}
               <li><a href="#" target="_blank">后台管理</a></li>
               {% endif %}
+              <li><a href="{{url_for('client.orders', order_status='all')}}">我是客户</a></li>
               <li><a href="{{url_for('chef.orders', order_status='all')}}">我是大厨</a></li>
               <li><a href="{{url_for('auth.logout')}}">Log out</a></li>
             </ul>
