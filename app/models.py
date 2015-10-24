@@ -112,6 +112,7 @@ class Meal(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(128))
     description = db.Column(db.Text)
+    is_selected = db.Column(db.Boolean, default=False)
     chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     create_date = db.Column(db.DateTime, default=db.func.now())
     zipcodes = association_proxy('meal_zipcodes', 'zipcodes')
