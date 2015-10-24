@@ -11,7 +11,7 @@ from ..models import Order, Meal, MealZipcode, Zipcode
 
 @client.route('/', methods=['GET', 'POST'])
 def index():
-    if 'client_zipcode' in session and Zipcode.is_valid(session['client_zipcode']) and 1==0:
+    if 'client_zipcode' in session and Zipcode.is_valid(session['client_zipcode']):
         return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
     else:
         # zipcode required
@@ -31,7 +31,7 @@ def menu(zipcode):
         if zipcode is None:
             return "zipcode is none"
         meals = zipcode.meals
-        return render_template('menu.html', meals=meals)
+        return render_template('client/menu.html', meals=meals)
     else:
         return "invalid zipcode"
 
