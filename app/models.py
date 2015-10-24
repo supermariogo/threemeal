@@ -142,12 +142,10 @@ class MealZipCode(db.Model):
     begin_date = db.Column(db.Date, default=db.func.now())
     end_date = db.Column(db.Date, default=db.func.now())
     create_date = db.Column(db.DateTime, default=db.func.now())
-    zipcodes = db.relationship('zipcode',
+    zipcodes = db.relationship(ZipCode,
                                backref=db.backref('meal_zipcodes',
-                                                  cascade='all, delete-orphan'),
-                               lazy='dynamic'
+                                                  cascade='all, delete-orphan')
                                )
-    meals = db.relationship('meals',
+    meals = db.relationship(Meal,
                             backref=db.backref('meal_zipcodes',
-                                               cascade='all, delete-orphan'),
-                            lazy='dynamic')
+                                               cascade='all, delete-orphan'))

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">大厨后台</div>
+        <ul class="list-group">
+          <li class="list-group-item"><a href="{{url_for('chef.orders', order_status='all')}}">订餐列表</a></li>
+          <li class="list-group-item"><a href="{{url_for('chef.meal_list')}}">meal列表</a></li>
+          <li class="list-group-item"><a href="{{url_for('chef.meal_create')}}">新建meal</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="col-md-10">
+     {% block admin_content %} {% endblock %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+
