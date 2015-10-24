@@ -14,10 +14,9 @@
         </tr>
       </thead>
       <tbody>
-        {# 注意:通过申请和已经拒绝的的不能再进行编辑 #}
         {% for meal in meals%}
         <tr>
-          <th>{{loop.index}}</th>
+          <td>{{loop.index}}</td>
           <td>{{meal.name}}</td>
           <td>{{meal.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
           <td>{{meal.is_selected}}</td>
