@@ -12,6 +12,25 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from . import db, login_manager
 
+
+def get_or_create(session, model, **kwargs):
+    """
+    获取或者创建对象
+    :param session: db session对象
+    :param model: model类
+    :param kwargs: 条件，比如date='2015-01-01'
+    :return:如果数据库中存在对应的对象，就返回该对象，否则在数据库中创建这个对象并返回
+    """
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
+
+
 roles_users = db.Table(
     'roles_users',
     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -129,6 +148,15 @@ class ZipCode(db.Model):
 
     def __repr__(self):
         return '<ZipCode %r>' % self.zip_code
+
+    @staticmethod
+    def add_zips(zips):
+        """
+        批量添加zip
+        :param zips: zip list
+        :return:所有zip对象
+        """
+        return [get_or_create(db.session, ZipCode, zip_code=zip.strip()) for zip in zips]
 
 
 class MealZipCode(db.Model):
