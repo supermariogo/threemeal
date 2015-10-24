@@ -32,7 +32,7 @@ def menu(zipcode):
         return "invalid zipcode"
 
 
-@client.route('/client/order_meal/<int:id>', methods=['GET', 'POST'])
+@client.route('/order_meal/<int:id>', methods=['GET', 'POST'])
 @login_required
 def order_meal(id):
     meal = Meal.query.get_or_404(id)
@@ -59,7 +59,7 @@ def order_meal(id):
     return render_template('client/order_meal.html', form=form, meal=meal)
 
 
-@client.route('/client/order_detail/<int:id>')
+@client.route('/order_detail/<int:id>')
 @login_required
 def order_detail(id):
     order = Order.query.get_or_404(id)
@@ -69,14 +69,14 @@ def order_detail(id):
     return render_template('client/order_detail.html', order=order)
 
 
-@client.route('/client/orders')
+@client.route('/orders')
 @login_required
 def orders():
     orders = Order.query.filter_by(client_id=current_user.id).order_by(Order.id.desc())
     return render_template('client/orders.html', orders=orders)
 
 
-@client.route('/client/order_edit/<int:id>', methods=['GET', 'POST'])
+@client.route('/order_edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def order_edit(id):
     order = Order.query.get_or_404(id)
