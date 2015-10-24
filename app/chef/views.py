@@ -24,8 +24,8 @@ def meal_list():
 @chef.route('/meal_detail/<int:id>')
 def meal_detail(id):
     """meal详情"""
-    print(id)
-    return "meal detail"
+    meal = Meal.query.get_or_404(id)
+    return render_template('chef/meal_detail.html', meal=meal)
 
 
 @chef.route('/meal_create', methods=['GET', 'POST'])
