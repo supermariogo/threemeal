@@ -1,11 +1,12 @@
-{% extends "base.html" %}
+{% extends 'client/client_base.html' %}
 
 {%block content %}
 <div class="row">
-    <div class="col-md-4 col-md-offset-2">
+    <div class="col-md-4 col-md-offset-1">
         {% for meal in meals %}
             {{meal.name}} <br>
             {{meal.description | safe}}
+            <a href="/order_meal/{{meal.id}}" class="btn btn-primary">详情</a>
             <hr>
         {% endfor %}
     </div>

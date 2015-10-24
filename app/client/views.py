@@ -13,8 +13,7 @@ from ..models import Order, Meal, MealZipcode, Zipcode
 def index():
     if 'client_zipcode' in session and Zipcode.is_valid(session['client_zipcode']):
         return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
-    else:
-        # zipcode required
+    else: # zipcode required
         form = ZipcodeForm()
         if form.validate_on_submit():
             session['client_zipcode'] = form.zipcode.data
@@ -24,16 +23,21 @@ def index():
                 flash('Invalid Zipcode', 'error')
         return render_template('index.html', form=form)
 
+@client.route('/bechef', methods=['GET', 'POST'])
+def bechef():
+    return render_template('client/bechef.html')
+
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):
     if Zipcode.is_valid(zipcode):
         zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
         if zipcode is None:
-            return "zipcode is none"
+            return redirect(url_for('client.bechef'))
         meals = zipcode.meals
         return render_template('client/menu.html', meals=meals)
     else:
-        return "invalid zipcode"
+        flash('invaid zipcode')
+        return redirect('/')
 
 @client.route('/meal/<int:id>')
 def meal_detail(id):
@@ -66,6 +70,8 @@ def order_meal(id):
                       status='UNHANDLED')
         db.session.add(order)
         db.session.commit()
+        flash(u"下单成功", "info")
+        return redirect(url_for('client.order_detail', id=order.id))
     return render_template('client/order_meal.html', form=form, meal=meal)
 
 
