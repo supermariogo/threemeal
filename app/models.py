@@ -134,7 +134,7 @@ class Meal(db.Model):
     is_selected = db.Column(db.Boolean, default=False)
     chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     create_date = db.Column(db.DateTime, default=db.func.now())
-    zipcodes = association_proxy('meal_zipcodes', 'zipcodes')
+    zipcodes = association_proxy('meal_zipcodes', 'zipcode')
 
     def __repr__(self):
         return '<Meal %r>' % self.name
@@ -144,7 +144,7 @@ class ZipCode(db.Model):
     __tablename__ = 'zipcode'
     id = db.Column(db.Integer(), primary_key=True)
     zip_code = db.Column(db.String(20))
-    meals = association_proxy('meal_zipcodes', 'meals')
+    meals = association_proxy('meal_zipcodes', 'meal')
 
     def __repr__(self):
         return '<ZipCode %r>' % self.zip_code

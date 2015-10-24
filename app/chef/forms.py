@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, \
 from ..models import Meal
 
 
-class MealCreateForm(Form):
+class MealEditForm(Form):
     zip_codes = StringField('Zip Code', validators=[DataRequired()])
     name = StringField('Meal Name', validators=[DataRequired()])
     description = TextAreaField()

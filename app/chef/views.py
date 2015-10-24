@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, abort
 from flask_login import login_required, current_user
 from . import chef
-from .forms import MealCreateForm
+from .forms import MealEditForm
 from .. import db
 from ..models import Meal, ZipCode, MealZipCode
 
@@ -34,7 +34,7 @@ def meal_detail(id):
 @login_required
 def meal_create():
     """创建meal"""
-    form = MealCreateForm()
+    form = MealEditForm()
     if form.validate_on_submit():
         zip_codes = form.zip_codes.data
         meal = Meal(name=form.name.data,
@@ -58,7 +58,34 @@ def meal_create():
 @login_required
 def meal_edit(id):
     """编辑meal"""
-    pass
+    meal = Meal.query.get_or_404(id)
+    if not current_user.has_role('superuser') and not meal.chef_id == current_user.id:
+        abort(403)
+    form = MealEditForm()
+    if form.validate_on_submit():
+        meal.name = form.name.data
+        meal.description = form.description.data
+        # update the begin and end date
+        for meal_zipcode in meal.meal_zipcodes:
+            meal_zipcode.begin_date=form.begin_date.data
+            meal_zipcode.end_date = form.end_date.data
+        zips = ZipCode.add_zips(form.zip_codes.data.split(','))
+        # create new MealZipCode
+        for zipcode in zips:
+            if zipcode not in meal.zipcodes:
+                meal_zipcode = MealZipCode(meal_id=meal.id,
+                                           zipcode_id=zipcode.id,
+                                           begin_date=form.begin_date.data,
+                                           end_date=form.end_date.data)
+                db.session.add(meal_zipcode)
+        db.session.add(meal)
+        db.session.commit()
+    form.zip_codes.data = ','.join((zipcode.zip_code for zipcode in meal.zipcodes))
+    form.name.data = meal.name
+    form.description.data = meal.description
+    form.begin_date.data = meal.meal_zipcodes[0].begin_date
+    form.end_date.data = meal.meal_zipcodes[0].end_date
+    return render_template('chef/meal_create.html', form=form)
 
 
 @chef.route('/orders/<order_status>')
