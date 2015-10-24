@@ -1,13 +1,44 @@
 {% extends 'client/client_base.html' %}
 
 {% block admin_content %}
-  <div class="row">
-    <div >
-      <ul class="list-group">
-           <li class="list-group-item">
-               Meal Name：{{order.meal.name}}
-           </li>
-       </ul>
+<div class="row">
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">订单详情</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    Meal Name：{{order.meal.name}}
+                </li>
+                <li class="list-group-item">
+                    Status：{{order.status}}
+                </li>
+                <li class="list-group-item">
+                    Create Date：{{order.create_date.strftime('%Y-%m-%d %H:%M:%S')}}
+                </li>
+                <li class="list-group-item">
+                    Zip Code：{{order.zipcode.zip_code}}
+                </li>
+                <li class="list-group-item">
+                    Address：{{order.address}}
+                </li>
+                <li class="list-group-item">
+                    Phone：{{order.phone}}
+                </li>
+                <li class="list-group-item">
+                    Message：{{order.message}}
+                </li>
+                {%if order.remark%}
+                <li class="list-group-item">
+                    Remark：{{order.remark}}
+                </li>
+                {%endif%}
+                {%if order.status in ('UNHANDLED', 'HANDLED') %}
+                <li class="list-group-item">
+                    <a href="{{url_for('client.order_edit', id=order.id)}}" class="btn btn-primary">编辑</a>
+                </li>
+                {%endif%}
+            </ul>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}
