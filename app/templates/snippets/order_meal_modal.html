@@ -1,0 +1,49 @@
+  <div class="modal fade in" id="order-meal-panel" tabindex="-1" role="dialog" aria-labelledby="order-meal-title" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title" id="order-meal-title">订餐</h4>
+              </div>
+              <div class="modal-body">  
+                <div class="container-fluid">
+                {% import "snippets/macros.html" as macros %}
+                {{ macros.flash_message("order_meal_error", "alert-warning") }}
+                <div class="row">
+                 <form class="form-horizontal" role="form" method="post" action="{{ url_for('client.order_meal', id=meal.id)}}">
+                     <fieldset>
+                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                         <div class="input-group user-pw-input">
+                             <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i>
+                             </span>
+                             <input id="address" type="text" class="form-control" name="address" required="required" value="" placeholder="Address">
+                         </div>
+                         <div class="input-group user-pw-input">
+                             <span class="input-group-addon"><i class="glyphicon glyphicon-Phone"></i>
+                             </span>
+                             <input id="phone" type="text" class="form-control" name="phone" required="required" value="" placeholder="Phone">
+                         </div>
+                         <div class="input-group user-pw-input">
+                             <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i>
+                             </span>
+                             <input id="message" type="text" class="form-control" name="message" value="" placeholder="Message">
+                         </div>
+                         <div class="form-group">
+                            <div class="controls user-pw-btn">
+                              <button class="btn btn-danger form-control">确定</button>
+                            </div>
+                         </div>
+                 
+                     </fieldset>
+                 </form> 
+                </div>
+
+                </div>
+                <!-- end modal-body -->
+             </div>
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->

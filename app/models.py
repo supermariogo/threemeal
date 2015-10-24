@@ -38,6 +38,24 @@ roles_users = db.Table(
 )
 
 
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    meal_id = db.Column(db.Integer, db.ForeignKey('meal.id'))
+    zip_id = db.Column(db.Integer, db.ForeignKey('zipcode.id'))
+    create_date = db.Column(db.DateTime, default=db.func.now())
+    update_date = db.Column(db.DateTime, default=db.func.now())
+    client_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    address = db.Column(db.String(256))
+    phone = db.Column(db.String(20))
+    message = db.Column(db.String(256))
+    #状态：未处理、已处理、确认收货、取消
+    status = db.Column(db.Enum('UNHANDLED', 'HANDLED', 'COMPLETED', 'CANCELED'))
+    remark = db.Column(db.String(256))
+    meal = db.relationship('Meal', backref='orders')
+    zipcode = db.relationship('ZipCode', backref='orders')
+
+
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -68,6 +86,10 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
 
     meals = db.relationship('Meal', backref="chef", lazy='dynamic')
+    client_orders = db.relationship('Order', foreign_keys=[Order.client_id],
+                                    backref="client", lazy='dynamic')
+    chef_orders = db.relationship('Order', foreign_keys=[Order.chef_id],
+                                    backref="chef", lazy='dynamic')
 
     @property
     def password(self):
@@ -177,23 +199,3 @@ class MealZipCode(db.Model):
     meal = db.relationship(Meal,
                             backref=db.backref('meal_zipcodes',
                                                cascade='all, delete-orphan'))
-
-
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    meal_id = db.Column(db.Integer, db.ForeignKey('meal.id'))
-    zip_id = db.Column(db.Integer, db.ForeignKey('zipcode.id'))
-    create_date = db.Column(db.DateTime, default=db.func.now())
-    update_date = db.Column(db.DateTime, default=db.func.now())
-    client_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    address = db.Column(db.String(256))
-    phone = db.Column(db.String(20))
-    message = db.Column(db.String(256))
-    #状态：未处理、已处理、确认收货
-    status = db.Column(db.Enum('UNHANDLED', 'HANDLED', 'COMPLETED'))
-    remark = db.Column(db.String(256))
-    meal = db.relationship(Meal, backref='orders', lazy='dynamic')
-    zipcode = db.relationship(ZipCode, backref='orders', lazy='dynamic')
-    client = db.relationship(User, backref='orders', lazy='dynamic')
-    chef = db.relationship(User, backref='chef_orders', lazy='dynamic')
