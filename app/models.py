@@ -179,6 +179,12 @@ class Zipcode(db.Model):
         :return:所有zip对象
         """
         return [get_or_create(db.session, Zipcode, zipcode=zip.strip()) for zip in zips]
+    @staticmethod
+    def is_valid(zipcode):
+        if zipcode is not None and zipcode != "" and len(zipcode) ==5 and zipcode.isdigit():
+            return True
+        else:
+            return False
 
 
 class MealZipcode(db.Model):

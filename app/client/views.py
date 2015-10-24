@@ -24,7 +24,10 @@ def index():
 
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):
-    return "Here is the menu for zipcode " + zipcode
+    if Zipcode.is_valid(zipcode):
+        return "Here is the menu for zipcode " + zipcode
+    else:
+        return "invalid zipcode"
 
 
 @client.route('/client/order_meal/<int:id>', methods=['GET', 'POST'])
