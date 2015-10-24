@@ -8,7 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from flask_security import UserMixin, RoleMixin
 from flask_security.core import AnonymousUserMixin
-from sqlalchemy import func
+from sqlalchemy.ext.associationproxy import association_proxy
 
 from . import db, login_manager
 
@@ -99,6 +99,7 @@ class User(db.Model, UserMixin):
         gravatar_url += urllib.urlencode({'d': random, 's': str(size)})
         return gravatar_url
 
+
 login_manager.anonymous_user = AnonymousUser
 
 
@@ -111,10 +112,41 @@ class Meal(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(128))
     description = db.Column(db.Text)
-    zip_code = db.Column(db.String(20))
-    status = db.Column(db.Enum('SELECTED', 'UNSELECTED'))
-    date = db.Column(db.Date, default=func.now())
     chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    create_date = db.Column(db.DateTime, default=db.func.now())
+    zipcodes = association_proxy('meal_zipcodes', 'zipcodes')
 
     def __repr__(self):
         return '<Meal %r>' % self.name
+
+
+class ZipCode(db.Model):
+    __tablename__ = 'zipcode'
+    id = db.Column(db.Integer(), primary_key=True)
+    zip_code = db.Column(db.String(20))
+    meals = association_proxy('meal_zipcodes', 'meals')
+
+    def __repr__(self):
+        return '<ZipCode %r>' % self.zip_code
+
+
+class MealZipCode(db.Model):
+    __tablename__ = 'meal_zipcode'
+    meal_id = db.Column(db.Integer,
+                        db.ForeignKey('meal.id'),
+                        primary_key=True)
+    zipcode_id = db.Column(db.Integer,
+                           db.ForeignKey('zipcode.id'),
+                           primary_key=True)
+    begin_date = db.Column(db.Date, default=db.func.now())
+    end_date = db.Column(db.Date, default=db.func.now())
+    create_date = db.Column(db.DateTime, default=db.func.now())
+    zipcodes = db.relationship('zipcode',
+                               backref=db.backref('meal_zipcodes',
+                                                  cascade='all, delete-orphan'),
+                               lazy='dynamic'
+                               )
+    meals = db.relationship('meals',
+                            backref=db.backref('meal_zipcodes',
+                                               cascade='all, delete-orphan'),
+                            lazy='dynamic')
