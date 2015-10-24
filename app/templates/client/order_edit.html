@@ -1,1 +1,36 @@
 {% extends 'client/client_base.html' %}
+
+{% block admin_content %}
+<div class="row">
+    <ul class="list-group">
+        <li class="list-group-item">
+            Meal Name：{{order.meal.name}}
+        </li>
+    </ul>
+    <form action="" method="post" accept-charset="utf-8">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input id="address" type="text" class="form-control" name="address" value="{{form.address.data}}"
+                   required="required"
+                   {%if not order.status=="UNHANDLED" %}readonly{%endif%}/>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone:</label>
+            <input id="phone" type="text" class="form-control" name="phone" value="{{form.phone.data}}"
+                   required="required"
+                   {%if not order.status=="UNHANDLED" %}readonly{%endif%}/>
+        </div>
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <input id="message" type="text" class="form-control" name="message" value="{{form.message.data or ''}}"
+                   {%if not order.status=="UNHANDLED" %}readonly{%endif%}/>
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            {{ form.status(class="form-control")}}
+        </div>
+        <button type="submit" class="btn btn-primary"> 保存</button>
+    </form>
+</div>
+{% endblock %}

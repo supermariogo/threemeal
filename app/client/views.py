@@ -3,7 +3,7 @@
 from flask import render_template, session, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from . import client
-from .forms import ClientOrderForm, MenuForm
+from .forms import ClientOrderForm, MenuForm, ClientOrderEditForm
 from .. import db
 from ..util import flash_errors
 from ..models import Order, Meal, MealZipCode
@@ -22,15 +22,13 @@ def index():
 def order_meal(id):
     meal = Meal.query.get_or_404(id)
     form = ClientOrderForm()
-    zip = session.get('client_zipcode', '')
-    zip_codes =(zip_code for zip_code in meal.zipcodes if zip_code.zip_code==zip)
-    zip_code = None
+    client_zip = session.get('client_zipcode', '')
     for zipcode in meal.zipcodes:
-        if zipcode.zip_code == zip:
+        if zipcode.zip_code == client_zip:
             zip_code = zipcode
             break
     else:
-        flash_errors('error', u'该产品不支持您所在的区域')
+        flash(u'该产品不支持您所在的区域', category='error')
         return redirect('/')
     if form.validate_on_submit():
         order = Order(meal_id=meal.id,
@@ -50,8 +48,8 @@ def order_meal(id):
 @login_required
 def order_detail(id):
     order = Order.query.get_or_404(id)
-    if not order.client_id == current_user.id:
-        flash(u'你没有权限查看这个订单', message='error')
+    if not (order.client_id == current_user.id or current_user.has_role('superuser')):
+        flash(u'你没有权限查看这个订单', category='error')
         return abort(403)
     return render_template('client/order_detail.html', order=order)
 
@@ -63,7 +61,24 @@ def orders():
     return render_template('client/orders.html', orders=orders)
 
 
-@client.route('/client/order_edit/<int:id>')
+@client.route('/client/order_edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def order_edit(id):
-    return render_template('client/order_edit.html')
+    order = Order.query.get_or_404(id)
+    if not (order.client_id == current_user.id or current_user.has_role('superuser')):
+        flash(u'你没有权限编辑这个订单', category='error')
+        return abort(403)
+    form = ClientOrderEditForm()
+    if form.validate_on_submit():
+        if order.status == 'HANDLED' and form.status.data == 'CANCELED':
+            flash(u'已经发货的订单不能取消')
+            return redirect(url_for('client.order_edit', id=id))
+        if order.status == 'UNHANDLED':
+            order.address = form.address.data
+            order.phone = form.phone.data
+            order.message = form.message.data
+    form.address.data = order.address
+    form.phone.data = order.phone
+    form.message.data = order.message
+    #form.status.data = order.status
+    return render_template('client/order_edit.html', form=form, order=order)
