@@ -27,7 +27,11 @@ def index():
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):
     if Zipcode.is_valid(zipcode):
-        return "Here is the menu for zipcode " + zipcode
+        zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
+        if zipcode is None:
+            return "zipcode is none"
+        meals = zipcode.meals
+        return render_template('menu.html', meals=meals)
     else:
         return "invalid zipcode"
 
