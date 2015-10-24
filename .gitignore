@@ -63,3 +63,6 @@ target/
 
 # Sqlite
 *.sqlite
+
+.tags
+.tags*

@@ -3,18 +3,28 @@
 from flask import render_template, session, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from . import client
-from .forms import ClientOrderForm, MenuForm, ClientOrderEditForm
+from .forms import ClientOrderForm, MenuForm, ClientOrderEditForm, ZipcodeForm
 from .. import db
 from ..util import flash_errors
-from ..models import Order, Meal, MealZipCode
+from ..models import Order, Meal, MealZipCode, ZipCode
 
 
 @client.route('/', methods=['GET', 'POST'])
 def index():
-    form = MenuForm()
-    if form.validate_on_submit():
-        session['client_zipcode'] = form.zip_code.data
-    return render_template('index.html', form=form)
+    if 'client_zipcode' in session and session['client_zipcode'] != "":
+        return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
+    else:
+        # zipcode required
+        form = ZipcodeForm()
+        if form.validate_on_submit():
+            session['client_zipcode'] = form.zipcode.data
+            return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
+        else:
+            return render_template('index.html', form=form)
+
+@client.route('/menu/<zipcode>', methods=['GET', 'POST'])
+def menu(zipcode):
+    return "Here is the menu for zipcode " + zipcode
 
 
 @client.route('/client/order_meal/<int:id>', methods=['GET', 'POST'])

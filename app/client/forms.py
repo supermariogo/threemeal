@@ -3,6 +3,12 @@ from flask_wtf import Form
 from wtforms import StringField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length
 
+class ZipcodeForm(Form):
+    zipcode = StringField('zipcode',
+                          validators=[DataRequired(),
+                                      Length(1, 10, message=u'zipcode在1-10个字符之间')
+                                      ]
+                          )
 
 class MenuForm(Form):
     zip_code = StringField('Address',
