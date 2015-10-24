@@ -186,6 +186,9 @@ class Order(db.Model):
     create_date = db.Column(db.DateTime, default=db.func.now())
     update_date = db.Column(db.DateTime, default=db.func.now())
     client_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    address = db.Column(db.String(256))
+    phone = db.Column(db.String(20))
     message = db.Column(db.String(256))
     #状态：未处理、已处理、确认收货
     status = db.Column(db.Enum('UNHANDLED', 'HANDLED', 'COMPLETED'))
@@ -193,3 +196,4 @@ class Order(db.Model):
     meal = db.relationship(Meal, backref='orders', lazy='dynamic')
     zipcode = db.relationship(ZipCode, backref='orders', lazy='dynamic')
     client = db.relationship(User, backref='orders', lazy='dynamic')
+    chef = db.relationship(User, backref='chef_orders', lazy='dynamic')
