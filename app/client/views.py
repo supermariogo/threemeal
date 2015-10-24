@@ -31,6 +31,12 @@ def menu(zipcode):
     else:
         return "invalid zipcode"
 
+@client.route('/meal/<int:id>')
+def meal_detail(id):
+    """meal详情"""
+    meal = Meal.query.get_or_404(id)
+    return render_template('chef/meal_detail.html', meal=meal)
+
 
 @client.route('/order_meal/<int:id>', methods=['GET', 'POST'])
 @login_required
