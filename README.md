@@ -61,3 +61,12 @@ python manage.py runserver
 - 管理员查看Meal列表（按ZipCode查询）
 - 管理员编辑Meal（推荐、取消推荐）
 - 用户根据ZipCode进行查询推荐
+
+---
+10月24日修改(hdl):
+
+- 为命名统一，zipcode作为一个单词使用. 所以zip_code(s) 改成了 zipcode(s), Zip_code 改成了 Zipcode
+
+
+
+

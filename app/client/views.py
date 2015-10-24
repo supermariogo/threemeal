@@ -11,16 +11,18 @@ from ..models import Order, Meal, MealZipcode, Zipcode
 
 @client.route('/', methods=['GET', 'POST'])
 def index():
-    if 'client_zipcode' in session and session['client_zipcode'] != "":
+    if 'client_zipcode' in session and Zipcode.is_valid(session['client_zipcode']) and 1==0:
         return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
     else:
         # zipcode required
         form = ZipcodeForm()
         if form.validate_on_submit():
             session['client_zipcode'] = form.zipcode.data
-            return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
-        else:
-            return render_template('index.html', form=form)
+            if Zipcode.is_valid(session['client_zipcode']):
+                return redirect(url_for('client.menu', zipcode=session['client_zipcode']))
+            else:
+                flash('Invalid Zipcode', 'error')
+        return render_template('index.html', form=form)
 
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):
