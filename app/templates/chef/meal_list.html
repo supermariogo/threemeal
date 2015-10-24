@@ -1,0 +1,34 @@
+{% extends 'chef/chef_base.html' %}
+
+{% block admin_content %}
+  <div class="panel panel-default">
+    <div class="panel-heading">Meal列表</div>
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>Meal</th>
+          <th>创建时间</th>
+          <th>是否被推荐</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {# 注意:通过申请和已经拒绝的的不能再进行编辑 #}
+        {% for meal in meals%}
+        <tr>
+          <th>{{loop.index}}</th>
+          <td>{{meal.name}}</td>
+          <td>{{meal.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+          <td>{{meal.is_selected}}</td>
+          <td>
+              <a href="{{url_for('chef.meal_detail', id=meal.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
+              <a href="{{url_for('chef.meal_edit', id=meal.id)}}" title="编辑" class="btn btn-xs btn-primary" enabled>编辑</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

@@ -18,7 +18,9 @@ def index():
 @login_required
 def meal_list():
     """meal列表"""
-    pass
+    meals = Meal.query.filter_by(chef_id=current_user.id).order_by(Meal.id.desc())
+    print(meals)
+    return render_template('chef/meal_list.html', meals=meals)
 
 
 @chef.route('/meal_detail/<int:id>')
