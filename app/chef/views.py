@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, redirect, url_for, abort
+from flask import render_template, redirect, url_for, abort, flash
 from flask_login import login_required, current_user
 from . import chef
 from .forms import MealEditForm
 from .. import db
-from ..models import Meal, Zipcode, MealZipcode
+from ..models import Meal, Zipcode, MealZipcode, Order
 
 
 @chef.route('/')
@@ -92,7 +92,8 @@ def meal_edit(id):
 @login_required
 def orders(order_status):
     """订单列表"""
-    return render_template('chef/orders.html')
+    orders = Order.query.filter_by(chef_id=current_user.id).order_by(Order.id.desc())
+    return render_template('chef/orders.html', orders=orders)
 
 
 @chef.route('/order_details/<int:id>', methods=['GET', 'POST'])

@@ -55,7 +55,6 @@
           <li><a href="/">首页</a></li>
           <li><a href="/">今日菜单</a></li>
           <li><a href="{{url_for('chef.meal_create')}}">菜肴发布</a></li>
-          <li><a href="{{url_for('chef.orders', order_status='all')}}">订单查看</a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
@@ -66,7 +65,7 @@
               {% if current_user.has_role('superuser') %}
               <li><a href="#" target="_blank">后台管理</a></li>
               {% endif %}
-              <li><a href="{{url_for('client.orders', order_status='all')}}">我是客户</a></li>
+              <li><a href="{{url_for('client.orders', order_status='all')}}">我是美食家</a></li>
               <li><a href="{{url_for('chef.orders', order_status='all')}}">我是大厨</a></li>
               <li><a href="{{url_for('auth.logout')}}">Log out</a></li>
             </ul>
