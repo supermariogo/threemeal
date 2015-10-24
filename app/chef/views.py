@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from . import chef
 from .forms import MealEditForm
 from .. import db
-from ..models import Meal, ZipCode, MealZipCode
+from ..models import Meal, Zipcode, MealZipcode
 
 
 @chef.route('/')
@@ -36,14 +36,14 @@ def meal_create():
     """创建meal"""
     form = MealEditForm()
     if form.validate_on_submit():
-        zip_codes = form.zip_codes.data
+        zipcodes = form.zipcodes.data
         meal = Meal(name=form.name.data,
                     description=form.description.data,
                     chef=current_user._get_current_object())
-        zips = ZipCode.add_zips(zip_codes.split(','))
+        zips = Zipcode.add_zips(zipcodes.split(','))
         db.session.add(meal)
         db.session.commit()
-        meal_zips = [MealZipCode(meal_id=meal.id,
+        meal_zips = [MealZipcode(meal_id=meal.id,
                                  zipcode_id=zip.id,
                                  begin_date=form.begin_date.data,
                                  end_date=form.end_date.data)
@@ -69,18 +69,18 @@ def meal_edit(id):
         for meal_zipcode in meal.meal_zipcodes:
             meal_zipcode.begin_date=form.begin_date.data
             meal_zipcode.end_date = form.end_date.data
-        zips = ZipCode.add_zips(form.zip_codes.data.split(','))
-        # create new MealZipCode
+        zips = Zipcode.add_zips(form.zipcodes.data.split(','))
+        # create new MealZipcode
         for zipcode in zips:
             if zipcode not in meal.zipcodes:
-                meal_zipcode = MealZipCode(meal_id=meal.id,
+                meal_zipcode = MealZipcode(meal_id=meal.id,
                                            zipcode_id=zipcode.id,
                                            begin_date=form.begin_date.data,
                                            end_date=form.end_date.data)
                 db.session.add(meal_zipcode)
         db.session.add(meal)
         db.session.commit()
-    form.zip_codes.data = ','.join((zipcode.zip_code for zipcode in meal.zipcodes))
+    form.zipcodes.data = ','.join((zipcode.zipcode for zipcode in meal.zipcodes))
     form.name.data = meal.name
     form.description.data = meal.description
     form.begin_date.data = meal.meal_zipcodes[0].begin_date

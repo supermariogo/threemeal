@@ -6,7 +6,7 @@ from . import client
 from .forms import ClientOrderForm, MenuForm, ClientOrderEditForm, ZipcodeForm
 from .. import db
 from ..util import flash_errors
-from ..models import Order, Meal, MealZipCode, ZipCode
+from ..models import Order, Meal, MealZipcode, Zipcode
 
 
 @client.route('/', methods=['GET', 'POST'])
@@ -34,15 +34,15 @@ def order_meal(id):
     form = ClientOrderForm()
     client_zip = session.get('client_zipcode', '')
     for zipcode in meal.zipcodes:
-        if zipcode.zip_code == client_zip:
-            zip_code = zipcode
+        if zipcode.zipcode == client_zip:
+            zipcode = zipcode
             break
     else:
         flash(u'该产品不支持您所在的区域', category='error')
         return redirect('/')
     if form.validate_on_submit():
         order = Order(meal_id=meal.id,
-                      zipcode=zip_code,
+                      zipcode=zipcode,
                       client_id=current_user.id,
                       chef_id=meal.chef_id,
                       address=form.address.data,

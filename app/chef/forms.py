@@ -9,7 +9,7 @@ from ..models import Meal
 
 
 class MealEditForm(Form):
-    zip_codes = StringField('Zip Code', validators=[DataRequired()])
+    zipcodes = StringField('Zip Code', validators=[DataRequired()])
     name = StringField('Meal Name', validators=[DataRequired()])
     description = TextAreaField()
     begin_date = DateField(u'Begin Date', validators=[DataRequired()])

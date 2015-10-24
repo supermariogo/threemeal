@@ -11,7 +11,7 @@ class ZipcodeForm(Form):
                           )
 
 class MenuForm(Form):
-    zip_code = StringField('Address',
+    zipcode = StringField('Address',
                           validators=[DataRequired(),
                                       Length(1, 10, message=u'地址在1-10个字符之间')
                                       ]

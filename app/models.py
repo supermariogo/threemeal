@@ -53,7 +53,7 @@ class Order(db.Model):
     status = db.Column(db.Enum('UNHANDLED', 'HANDLED', 'COMPLETED', 'CANCELED'))
     remark = db.Column(db.String(256))
     meal = db.relationship('Meal', backref='orders')
-    zipcode = db.relationship('ZipCode', backref='orders')
+    zipcode = db.relationship('Zipcode', backref='orders')
 
 
 class Role(db.Model, RoleMixin):
@@ -162,14 +162,14 @@ class Meal(db.Model):
         return '<Meal %r>' % self.name
 
 
-class ZipCode(db.Model):
+class Zipcode(db.Model):
     __tablename__ = 'zipcode'
     id = db.Column(db.Integer(), primary_key=True)
-    zip_code = db.Column(db.String(20))
+    zipcode = db.Column(db.String(20))
     meals = association_proxy('meal_zipcodes', 'meal')
 
     def __repr__(self):
-        return '<ZipCode %r>' % self.zip_code
+        return '<Zipcode %r>' % self.zipcode
 
     @staticmethod
     def add_zips(zips):
@@ -178,10 +178,10 @@ class ZipCode(db.Model):
         :param zips: zip list
         :return:所有zip对象
         """
-        return [get_or_create(db.session, ZipCode, zip_code=zip.strip()) for zip in zips]
+        return [get_or_create(db.session, Zipcode, zipcode=zip.strip()) for zip in zips]
 
 
-class MealZipCode(db.Model):
+class MealZipcode(db.Model):
     __tablename__ = 'meal_zipcode'
     meal_id = db.Column(db.Integer,
                         db.ForeignKey('meal.id'),
@@ -192,7 +192,7 @@ class MealZipCode(db.Model):
     begin_date = db.Column(db.Date, default=db.func.now())
     end_date = db.Column(db.Date, default=db.func.now())
     create_date = db.Column(db.DateTime, default=db.func.now())
-    zipcode = db.relationship(ZipCode,
+    zipcode = db.relationship(Zipcode,
                                backref=db.backref('meal_zipcodes',
                                                   cascade='all, delete-orphan')
                                )
