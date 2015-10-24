@@ -3,6 +3,7 @@
 from flask import render_template
 from flask_login import login_required
 from . import chef
+from .forms import MealCreateForm
 
 
 @chef.route('/')
@@ -22,7 +23,10 @@ def meal_list():
 @login_required
 def meal_create():
     """创建meal"""
-    return "public meal"
+    form = MealCreateForm()
+    if form.validate_on_submit():
+        pass
+    return render_template('chef/meal_create.html', form=form)
 
 
 @chef.route('/meal_edit/<int:id>', methods=['GET', 'POST'])
