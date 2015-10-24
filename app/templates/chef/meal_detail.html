@@ -17,6 +17,7 @@
             <h2 class="text-center">{{meal.name}}</h2>
             {% set meal_zip = meal.meal_zipcodes[0]%}
             <p>开始日期：{{meal_zip.begin_date}} &nbsp;&nbsp;结束日期：{{meal_zip.end_date}}</p>
+            <p>配送地区: {% for zip in meal.zipcodes %} {{ zip.zipcode }} {% endfor %}</p>
             <hr>
             <p>{{meal.description|safe}}</p>
             <hr>
