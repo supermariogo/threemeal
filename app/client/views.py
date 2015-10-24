@@ -59,7 +59,8 @@ def order_detail(id):
 @client.route('/client/orders')
 @login_required
 def orders():
-    return render_template('client/orders.html')
+    orders = Order.query.filter_by(client_id=current_user.id).order_by(Order.id.desc())
+    return render_template('client/orders.html', orders=orders)
 
 
 @client.route('/client/order_edit/<int:id>')
