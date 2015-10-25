@@ -21,7 +21,18 @@
             <hr>
             <p>{{meal.description|safe}}</p>
             <hr>
-            <p><a data-toggle="modal" href="#order-meal-panel" class="btn btn-primary">下单预订</a></p>
+            <p>
+                {% if not meal.chef_id == current_user.id %}
+                <a data-toggle="modal" href="#order-meal-panel" class="btn btn-primary">下单预订</a>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.has_role('superuser') %}
+                    {% if meal.is_selected %}
+                        <a href="{{url_for('admin.meal_edit', id=meal.id, selected='no')}}" class="btn btn-danger">取消推荐</a>
+                    {% else %}
+                        <a href="{{url_for('admin.meal_edit', id=meal.id, selected='yes')}}" class="btn btn-primary">推荐</a>
+                    {% endif %}
+                {% endif %}
+            </p>
         </div>
     </div>
 </div>

@@ -19,7 +19,7 @@
         <tr>
           <td>{{loop.index}}</td>
           <td>{{order.meal.name}}</td>
-          <td>{{order.client.email}}</td>
+          <td>{{order.client.nickname or order.client.email}}</td>
           <td>{{order.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
           <td>{{order.status}}</td>
           <td>
