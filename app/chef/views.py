@@ -43,7 +43,7 @@ def meal_create():
                      for zip in zips]
         db.session.add_all(meal_zips)
         db.session.commit()
-        return redirect(url_for('chef.meal_detail', id=meal.id))
+        return redirect(url_for('client.meal_detail', id=meal.id))
     return render_template('chef/meal_create.html', form=form)
 
 
@@ -63,21 +63,27 @@ def meal_edit(id):
             meal_zipcode.begin_date=form.begin_date.data
             meal_zipcode.end_date = form.end_date.data
         zips = Zipcode.add_zips(form.zipcodes.data.split(','))
+        #db.session.delete_all(meal.meal_zipcodes)
+        print(dir(meal.meal_zipcodes))
+        print(type(meal.meal_zipcodes))
+        while(len(meal.meal_zipcodes) > 0):
+            meal.meal_zipcodes.pop()
+        print(meal.meal_zipcodes)
         # create new MealZipcode
         for zipcode in zips:
-            if zipcode not in meal.zipcodes:
-                meal_zipcode = MealZipcode(meal_id=meal.id,
-                                           zipcode_id=zipcode.id,
-                                           begin_date=form.begin_date.data,
-                                           end_date=form.end_date.data)
-                db.session.add(meal_zipcode)
+            meal_zipcode = MealZipcode(meal_id=meal.id,
+                                       zipcode_id=zipcode.id,
+                                       begin_date=form.begin_date.data,
+                                       end_date=form.end_date.data)
+            db.session.add(meal_zipcode)
         db.session.add(meal)
         db.session.commit()
     form.zipcodes.data = ','.join((zipcode.zipcode for zipcode in meal.zipcodes))
     form.name.data = meal.name
     form.description.data = meal.description
-    form.begin_date.data = meal.meal_zipcodes[0].begin_date
-    form.end_date.data = meal.meal_zipcodes[0].end_date
+    if len(meal.meal_zipcodes) > 0:
+        form.begin_date.data = meal.meal_zipcodes[0].begin_date
+        form.end_date.data = meal.meal_zipcodes[0].end_date
     return render_template('chef/meal_create.html', form=form)
 
 
