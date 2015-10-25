@@ -3,7 +3,7 @@
 from flask import render_template, redirect, url_for, abort, flash
 from flask_login import login_required, current_user
 from . import chef
-from .forms import MealEditForm
+from .forms import MealEditForm, ChefOrderEditForm
 from .. import db
 from ..models import Meal, Zipcode, MealZipcode, Order
 
@@ -92,12 +92,27 @@ def orders(order_status):
     return render_template('chef/orders.html', orders=orders)
 
 
-@chef.route('/order_detail/<int:id>', methods=['GET', 'POST'])
+@chef.route('/order/<int:id>/detail', methods=['GET', 'POST'])
 @login_required
 def order_detail(id):
-    """订单处理，已发货、未发货"""
+    """订单查看"""
     order = Order.query.get_or_404(id)
     if not (order.chef_id == current_user.id or current_user.has_role('superuser')):
         flash(u'你没有权限查看这个订单', category='error')
         return abort(403)
     return render_template('chef/order_detail.html', order=order)
+
+
+@chef.route('/order/<int:id>/edit/', methods=['GET', 'POST'])
+@login_required
+def order_edit(id):
+    """处理，已发货、未发货"""
+    order = Order.query.get_or_404(id)
+    if not (order.chef_id == current_user.id or current_user.has_role('superuser')):
+        flash(u'你没有权限查看这个订单', category='error')
+        return abort(403)
+    form = ChefOrderEditForm()
+    if form.validate_on_submit():
+        order.status = form.status.data
+    form.status.data = order.status
+    return render_template('chef/order_edit.html', order=order, form=form)

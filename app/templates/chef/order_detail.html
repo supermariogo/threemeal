@@ -34,7 +34,7 @@
                 {%endif%}
                 {%if order.status in ('UNHANDLED', 'HANDLED') %}
                 <li class="list-group-item">
-                    <a href="#" class="btn btn-primary">编辑</a>
+                    <a href="{{url_for('chef.order_edit', id=order.id)}}" class="btn btn-primary">编辑</a>
                 </li>
                 {%endif%}
             </ul>
