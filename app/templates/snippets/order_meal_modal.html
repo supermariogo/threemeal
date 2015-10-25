@@ -10,7 +10,7 @@
                 {% import "snippets/macros.html" as macros %}
                 {{ macros.flash_message("order_meal_error", "alert-warning") }}
                 <div class="row">
-                 <form class="form-horizontal" role="form" method="post" action="{{ url_for('client.order_meal', id=meal.id)}}">
+                 <form class="form-horizontal" role="form" method="post" action="{{ url_for('client.meal_detail', id=meal.id)}}">
                      <fieldset>
                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                          <div class="input-group user-pw-input">

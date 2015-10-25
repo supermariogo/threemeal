@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, session, redirect, url_for, flash, abort
+from flask import render_template, session, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from . import client
 from .forms import ClientOrderForm, MenuForm, ClientOrderEditForm, ZipcodeForm
@@ -24,36 +24,13 @@ def index():
         return render_template('index.html', form=form)
 
 
-@client.route('/meal/<int:id>')
+@client.route('/meal/<int:id>', methods=['GET', 'POST'])
 def meal_detail(id):
     """meal详情"""
     meal = Meal.query.get_or_404(id)
-    return render_template('client/meal_detail.html', meal=meal)
-
-
-@client.route('/bechef', methods=['GET', 'POST'])
-def bechef():
-    return render_template('client/bechef.html')
-
-
-@client.route('/menu/<zipcode>', methods=['GET', 'POST'])
-def menu(zipcode):
-    if Zipcode.is_valid(zipcode):
-        zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
-        if zipcode is None:
-            return redirect(url_for('client.bechef'))
-        meals = zipcode.meals
-        return render_template('client/menu.html', meals=meals)
-    else:
-        flash('invaid zipcode')
-        return redirect('/')
-
-
-@client.route('/order_meal/<int:id>', methods=['GET', 'POST'])
-def order_meal(id):
-    meal = Meal.query.get_or_404(id)
     form = ClientOrderForm()
     client_zip = session.get('client_zipcode', '')
+    show_modal = False
     for zipcode in meal.zipcodes:
         if zipcode.zipcode == client_zip:
             zipcode = zipcode
@@ -74,7 +51,55 @@ def order_meal(id):
         db.session.commit()
         flash(u"下单成功", "info")
         return redirect(url_for('client.order_detail', id=order.id))
-    return render_template('client/order_meal.html', form=form, meal=meal)
+    elif request.method == 'POST':
+        show_modal = True
+    return render_template('client/meal_detail.html', meal=meal, form=form, show_modal=show_modal)
+
+
+@client.route('/bechef', methods=['GET', 'POST'])
+def bechef():
+    return render_template('client/bechef.html')
+
+
+@client.route('/menu/<zipcode>', methods=['GET', 'POST'])
+def menu(zipcode):
+    if Zipcode.is_valid(zipcode):
+        zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
+        if zipcode is None:
+            return redirect(url_for('client.bechef'))
+        meals = zipcode.meals
+        return render_template('client/menu.html', meals=meals)
+    else:
+        flash('invaid zipcode')
+        return redirect('/')
+
+
+# @client.route('/order_meal/<int:id>', methods=['GET', 'POST'])
+# def order_meal(id):
+#     meal = Meal.query.get_or_404(id)
+#     form = ClientOrderForm()
+#     client_zip = session.get('client_zipcode', '')
+#     for zipcode in meal.zipcodes:
+#         if zipcode.zipcode == client_zip:
+#             zipcode = zipcode
+#             break
+#     else:
+#         flash(u'该产品不支持您所在的区域', category='error')
+#         return redirect('/')
+#     if form.validate_on_submit():
+#         order = Order(meal_id=meal.id,
+#                       zipcode=zipcode,
+#                       client_id=current_user.id,
+#                       chef_id=meal.chef_id,
+#                       address=form.address.data,
+#                       phone=form.phone.data,
+#                       message=form.message.data,
+#                       status='UNHANDLED')
+#         db.session.add(order)
+#         db.session.commit()
+#         flash(u"下单成功", "info")
+#         return redirect(url_for('client.order_detail', id=order.id))
+#     return render_template('client/order_meal.html', form=form, meal=meal)
 
 
 @client.route('/order_detail/<int:id>')

@@ -30,3 +30,15 @@
 
 {% endblock %}
 
+{% block script_files %}
+{% if show_modal %}
+
+<script>
+    $(function(){
+        $('#order-meal-panel').modal('show');
+    });
+</script>
+
+{% endif %}
+{% endblock %}
+
