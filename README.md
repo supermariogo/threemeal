@@ -61,7 +61,7 @@ python manage.py runserver
 - ~~管理员查看Meal列表（按ZipCode查询）~~
 - ~~管理员编辑Meal（推荐、取消推荐）~~
 - ~~用户根据ZipCode进行查询~~
-- 今日菜单（根据zipcode查询今天被推荐的meal）
+- ~~今日菜单（根据zipcode查询今天被推荐的meal）~~
 
 ---
 10月24日修改(hdl):
