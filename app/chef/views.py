@@ -63,9 +63,6 @@ def meal_edit(id):
             meal_zipcode.begin_date=form.begin_date.data
             meal_zipcode.end_date = form.end_date.data
         zips = Zipcode.add_zips(form.zipcodes.data.split(','))
-        #db.session.delete_all(meal.meal_zipcodes)
-        print(dir(meal.meal_zipcodes))
-        print(type(meal.meal_zipcodes))
         while(len(meal.meal_zipcodes) > 0):
             meal.meal_zipcodes.pop()
         print(meal.meal_zipcodes)
