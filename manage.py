@@ -12,5 +12,23 @@ migrate = Migrate(app, db)
 
 manager.add_command('db', MigrateCommand)
 
+
+@manager.command
+def add_admin():
+    from app.models import Role, User
+    user_role = Role(name='user')
+    super_user_role = Role(name='superuser')
+    db.session.add(user_role)
+    db.session.add(super_user_role)
+    db.session.commit()
+    admin = User(nickname='admin',
+                 email=app.config['THREEMEAL_ADMIN'],
+                 password=app.config['THREEMEAL_ADMIN_PWD'])
+    db.session.add(admin)
+    db.session.commit()
+    admin.roles = [user_role, super_user_role]
+    db.session.add(admin)
+    db.session.commit()
+
 if __name__ == '__main__':
     manager.run()
