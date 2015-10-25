@@ -33,6 +33,8 @@ def meals(order_status):
         if zipcode:
             #meals = meals.select_from(join(Meal, MealZipcode)).filter(MealZipcode.zipcode_id==zipcode.id)
             meals = meals.filter(Meal.id==MealZipcode.meal_id).filter(MealZipcode.zipcode_id==zipcode.id)
+        else:
+            meals = []
     return render_template('admin/meals.html', meals=meals,
                            order_status=order_status_dict[order_status],
                            zipcode=request.args.get('zipcode'))
