@@ -18,6 +18,7 @@ class MealEditForm(Form):
 
 class ChefOrderEditForm(Form):
     status = SelectField('Status', coerce=unicode, validators=[DataRequired()])
+    remark = StringField('Remark', validators=[Length(0, 256, message=u'长度要小于256个字符')])
 
     def __init__(self, *args, **kwargs):
         super(ChefOrderEditForm, self).__init__(*args, **kwargs)

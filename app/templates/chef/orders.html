@@ -10,6 +10,7 @@
           <th>Meal</th>
           <th>客户</th>
           <th>下单时间</th>
+          <th>订单状态</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -20,6 +21,7 @@
           <td>{{order.meal.name}}</td>
           <td>{{order.client.email}}</td>
           <td>{{order.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+          <td>{{order.status}}</td>
           <td>
               <a href="{{url_for('chef.order_detail', id=order.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
           </td>

@@ -114,5 +114,7 @@ def order_edit(id):
     form = ChefOrderEditForm()
     if form.validate_on_submit():
         order.status = form.status.data
+        order.remark = form.remark.data
     form.status.data = order.status
+    form.remark.data = order.remark
     return render_template('chef/order_edit.html', order=order, form=form)
