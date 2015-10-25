@@ -2,6 +2,19 @@
 
 {%block content %}
 <div class="row">
+    <form method="get" action="" accept-charset="utf-8">
+        <div class="col-md-4 col-md-offset-1">
+            <div class="input-group">
+                <input id="zipcode" name="zipcode" type="text" class="form-control" value="{{zipcode or ''}}" placeholder="Zip Code">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">查询</button>
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+<hr>
+<div class="row">
     <div class="col-md-4 col-md-offset-1">
         {% for meal in meals %}
             {{meal.name}} <br>

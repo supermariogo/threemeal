@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-
+import datetime
 from flask import render_template, session, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from . import client
@@ -63,12 +63,22 @@ def bechef():
 
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):
+    zipcode2 = request.args.get('zipcode')
+    if zipcode2 is not None and zipcode2 != zipcode:
+        return redirect(url_for('client.menu', zipcode=zipcode2))
     if Zipcode.is_valid(zipcode):
         zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
         if zipcode is None:
             return redirect(url_for('client.bechef'))
-        meals = zipcode.meals
-        return render_template('client/menu.html', meals=meals)
+        session['client_zipcode'] = zipcode.zipcode
+        now = datetime.datetime.now().date()
+        meals = Meal.query\
+            .filter(Meal.is_selected==True)\
+            .filter(Meal.id==MealZipcode.meal_id)\
+            .filter(MealZipcode.zipcode_id==zipcode.id)\
+            .filter(MealZipcode.begin_date<=now)\
+            .filter(MealZipcode.end_date>=now)
+        return render_template('client/menu.html', meals=meals, zipcode=zipcode.zipcode)
     else:
         flash('invaid zipcode')
         return redirect('/')
