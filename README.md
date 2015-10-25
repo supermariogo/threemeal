@@ -55,17 +55,18 @@ python manage.py runserver
 ## 5. TODO
 
 - ~~用户查看自己的订单列表~~
-- 大厨查看自己的订单列表
+- ~~大厨查看自己的订单列表~~
 - 大厨编辑订单（处理、取消订单）
 - ~~用户编辑订单（收获确认、取消订单）~~
 - 管理员查看Meal列表（按ZipCode查询）
 - 管理员编辑Meal（推荐、取消推荐）
-- 用户根据ZipCode进行查询推荐
+- ~~用户根据ZipCode进行查询~~
 
 ---
 10月24日修改(hdl):
 
 - 为命名统一，zipcode作为一个单词使用. 所以zip_code(s) 改成了 zipcode(s), Zip_code 改成了 Zipcode
+- meal的url是否应该改成 /meal 而不是 /chef/meal . 同时，取消meal_oder . 待讨论
 
 
 

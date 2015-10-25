@@ -41,7 +41,6 @@ def menu(zipcode):
 
 
 @client.route('/order_meal/<int:id>', methods=['GET', 'POST'])
-@login_required
 def order_meal(id):
     meal = Meal.query.get_or_404(id)
     form = ClientOrderForm()

@@ -96,8 +96,12 @@ def orders(order_status):
     return render_template('chef/orders.html', orders=orders)
 
 
-@chef.route('/order_details/<int:id>', methods=['GET', 'POST'])
+@chef.route('/order_detail/<int:id>', methods=['GET', 'POST'])
 @login_required
-def order_details(id):
+def order_detail(id):
     """订单处理，已发货、未发货"""
-    pass
+    order = Order.query.get_or_404(id)
+    if not (order.chef_id == current_user.id or current_user.has_role('superuser')):
+        flash(u'你没有权限查看这个订单', category='error')
+        return abort(403)
+    return render_template('chef/order_detail.html', order=order)

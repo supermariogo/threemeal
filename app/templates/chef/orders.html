@@ -21,7 +21,7 @@
           <td>{{order.client.email}}</td>
           <td>{{order.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
           <td>
-              <a href="{{url_for('client.order_detail', id=order.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
+              <a href="{{url_for('chef.order_detail', id=order.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
           </td>
         </tr>
         {% endfor %}
