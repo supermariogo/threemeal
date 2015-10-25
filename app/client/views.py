@@ -23,9 +23,18 @@ def index():
                 flash('Invalid Zipcode', 'error')
         return render_template('index.html', form=form)
 
+
+@client.route('/meal/<int:id>')
+def meal_detail(id):
+    """meal详情"""
+    meal = Meal.query.get_or_404(id)
+    return render_template('client/meal_detail.html', meal=meal)
+
+
 @client.route('/bechef', methods=['GET', 'POST'])
 def bechef():
     return render_template('client/bechef.html')
+
 
 @client.route('/menu/<zipcode>', methods=['GET', 'POST'])
 def menu(zipcode):

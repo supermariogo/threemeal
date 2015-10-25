@@ -14,14 +14,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for meal in orders%}
+        {% for meal in meals%}
         <tr>
           <td>{{loop.index}}</td>
-          <td>{{order.mealname}}</td>
-          <td>{{order.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+          <td>{{meal.name}}</td>
+          <td>{{meal.create_date.strftime('%Y-%m-%d %H:%M:%S')}}</td>
           <td>{{meal.is_selected}}</td>
           <td>
-              <a href="{{url_for('chef.meal_detail', id=meal.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
+              <a href="{{url_for('client.meal_detail', id=meal.id)}}" title="查看" class="btn btn-xs btn-info" enabled>查看</a>
               <a href="{{url_for('chef.meal_edit', id=meal.id)}}" title="编辑" class="btn btn-xs btn-primary" enabled>编辑</a>
           </td>
         </tr>
