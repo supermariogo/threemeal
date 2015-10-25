@@ -131,10 +131,13 @@ def order_edit(id):
         if order.status == 'HANDLED' and form.status.data == 'CANCELED':
             flash(u'已经发货的订单不能取消')
             return redirect(url_for('client.order_edit', id=id))
+        elif order.status == 'HANDLED' and form.status.data == 'COMPLETED':
+            order.status = form.status.data
         if order.status == 'UNHANDLED':
             order.address = form.address.data
             order.phone = form.phone.data
             order.message = form.message.data
+        return redirect(url_for('client.order_detail', id=id))
     form.address.data = order.address
     form.phone.data = order.phone
     form.message.data = order.message

@@ -2,11 +2,31 @@
 
 {% block admin_content %}
 <div class="row">
-    <ul class="list-group">
-        <li class="list-group-item">
-            Meal Name：{{order.meal.name}}
-        </li>
-    </ul>
+    <div class="panel panel-default">
+        <div class="panel-heading">订单详情</div>
+        <ul class="list-group">
+            <li class="list-group-item">
+                Meal Name：{{order.meal.name}}
+            </li>
+            <li class="list-group-item">
+                Order Status：{{order.status}}
+            </li>
+            {% if not order.status == 'UNHANDLED' %}
+            <li class="list-group-item">
+                Address：{{order.address}}
+            </li>
+            <li class="list-group-item">
+                Phone：{{order.phone}}
+            </li>
+            <li class="list-group-item">
+                Message：{{order.message or ''}}
+            </li>
+            <li class="list-group-item">
+                Remark：{{order.remark or ''}}
+            </li>
+            {% endif %}
+        </ul>
+    </div>
     <form action="" method="post" accept-charset="utf-8">
         {{ form.hidden_tag() }}
         <div class="form-group">
@@ -26,11 +46,13 @@
             <input id="message" type="text" class="form-control" name="message" value="{{form.message.data or ''}}"
                    {%if not order.status=="UNHANDLED" %}readonly{%endif%}/>
         </div>
+        {% if order.status in ('UNHANDLED', 'HANDLED') %}
         <div class="form-group">
             <label for="status">Status:</label>
             {{ form.status(class="form-control")}}
         </div>
         <button type="submit" class="btn btn-primary"> 保存</button>
+        {% endif %}
     </form>
 </div>
 {% endblock %}
