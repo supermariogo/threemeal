@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
 
 from flask import render_template, request, redirect, url_for
+from sqlalchemy.orm.util import join
 from .. import csrf
 from ..decorators import superuser_required
-from ..models import Meal
+from ..models import Meal, MealZipcode, Zipcode
 from . import admin
 
 
@@ -21,13 +22,20 @@ def meals(order_status):
     :param order_status: all, selected, unselected
     :return: the admin's meal list page
     """
+    order_status_dict = {'all': u'全部Meal', 'selected': u'推荐的Meal', 'unselected': u'其他Meal'}
+    zipcode = request.args.get('zipcode')
+    meals = Meal.query
     if order_status in ('selected', 'unselected'):
         selected = True if order_status=='selected' else False
-        meals = Meal.query.filter_by(is_selected=selected).order_by(Meal.id.desc())
-    else:
-        order_status = 'all'
-        meals = Meal.query.order_by(Meal.id.desc())
-    return render_template('admin/meals.html', meals=meals)
+        meals = meals.filter_by(is_selected=selected)
+    if zipcode:
+        zipcode = Zipcode.query.filter_by(zipcode=zipcode).first()
+        if zipcode:
+            #meals = meals.select_from(join(Meal, MealZipcode)).filter(MealZipcode.zipcode_id==zipcode.id)
+            meals = meals.filter(Meal.id==MealZipcode.meal_id).filter(MealZipcode.zipcode_id==zipcode.id)
+    return render_template('admin/meals.html', meals=meals,
+                           order_status=order_status_dict[order_status],
+                           zipcode=request.args.get('zipcode'))
 
 
 @admin.route('/meal/<int:id>/edit')
