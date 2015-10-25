@@ -6,7 +6,7 @@
         {% for meal in meals %}
             {{meal.name}} <br>
             {{meal.description | safe}}
-            <a href="/order_meal/{{meal.id}}" class="btn btn-primary">详情</a>
+            <a href="{{url_for('client.meal_detail', id=meal.id)}}" class="btn btn-primary">详情</a>
             <hr>
         {% endfor %}
     </div>
