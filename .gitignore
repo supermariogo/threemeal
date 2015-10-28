@@ -66,3 +66,4 @@ target/
 
 .tags
 .tags*
+migrations/
