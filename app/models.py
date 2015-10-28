@@ -40,20 +40,50 @@ roles_users = db.Table(
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    meal_id = db.Column(db.Integer, db.ForeignKey('meal.id'))
-    zip_id = db.Column(db.Integer, db.ForeignKey('zipcode.id'))
+    meal_id = db.Column(db.Integer)
+    zip_id = db.Column(db.Integer)
     create_date = db.Column(db.DateTime, default=db.func.now())
     update_date = db.Column(db.DateTime, default=db.func.now())
-    client_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    client_id = db.Column(db.Integer)
+    chef_id = db.Column(db.Integer)
     address = db.Column(db.String(256))
     phone = db.Column(db.String(20))
     message = db.Column(db.String(256))
-    #状态：未处理、已处理、确认收货、取消
+    # 状态：未处理、已处理、确认收货、取消
     status = db.Column(db.Enum('UNHANDLED', 'HANDLED', 'COMPLETED', 'CANCELED'))
     remark = db.Column(db.String(256))
-    meal = db.relationship('Meal', backref='orders')
-    zipcode = db.relationship('Zipcode', backref='orders')
+
+    @property
+    def zipcode(self):
+        return Zipcode.query.get_or_404(self.zip_id)
+
+    @zipcode.setter
+    def zipcode(self, zipcode):
+        self.zip_id = zipcode.id
+
+    @property
+    def meal(self):
+        return Meal.query.get_or_404(self.meal_id)
+
+    @meal.setter
+    def meal(self, meal):
+        self.meal_id = meal.id
+
+    @property
+    def client(self):
+        return User.query.get_or_404(self.client_id)
+
+    @client.setter
+    def client(self, client):
+        self.client_id = client.id
+
+    @property
+    def chef(self):
+        return User.query.get_or_404(self.chef_id)
+
+    @chef.setter
+    def chef(self, chef):
+        self.chef_id = chef.id
 
 
 class Role(db.Model, RoleMixin):
@@ -84,12 +114,6 @@ class User(db.Model, UserMixin):
 
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-
-    meals = db.relationship('Meal', backref="chef", lazy='dynamic')
-    client_orders = db.relationship('Order', foreign_keys=[Order.client_id],
-                                    backref="client", lazy='dynamic')
-    chef_orders = db.relationship('Order', foreign_keys=[Order.chef_id],
-                                    backref="chef", lazy='dynamic')
 
     @property
     def password(self):
@@ -140,6 +164,30 @@ class User(db.Model, UserMixin):
         gravatar_url += urllib.urlencode({'d': random, 's': str(size)})
         return gravatar_url
 
+    @property
+    def meals(self):
+        return Meal.query.filter(Meal.chef_id == self.id)
+
+    @meals.setter
+    def meals(self, meals):
+        raise AttributeError('password is not a writable attribute')
+
+    @property
+    def client_orders(self):
+        return Order.query.filter(Order.client_id == self.id)
+
+    @client_orders.setter
+    def client_orders(self, orders):
+        raise AttributeError('client_orders is not a writable attribute')
+
+    @property
+    def chef_orders(self):
+        return Order.query.filter(Order.chef_id == self.id)
+
+    @chef_orders.setter
+    def chef_orders(self, orders):
+        raise AttributeError('chef_orders is not a writable attribute')
+
 
 login_manager.anonymous_user = AnonymousUser
 
@@ -154,12 +202,28 @@ class Meal(db.Model):
     name = db.Column(db.String(128))
     description = db.Column(db.Text)
     is_selected = db.Column(db.Boolean, default=False)
-    chef_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    chef_id = db.Column(db.Integer)
     create_date = db.Column(db.DateTime, default=db.func.now())
     zipcodes = association_proxy('meal_zipcodes', 'zipcode')
 
     def __repr__(self):
         return '<Meal %r>' % self.name
+
+    @property
+    def orders(self):
+        return Order.query.filter(Order.meal_id == self.id)
+
+    @orders.setter
+    def orders(self, orders):
+        raise AttributeError('orders is not a writable attribute')
+
+    @property
+    def chef(self):
+        return User.query.get_or_404(self.chef_id)
+
+    @chef.setter
+    def chef(self, chef):
+        self.chef_id = chef.id
 
 
 class Zipcode(db.Model):
@@ -182,10 +246,18 @@ class Zipcode(db.Model):
 
     @staticmethod
     def is_valid(zipcode):
-        if zipcode is not None and zipcode != "" and len(zipcode) ==5 and zipcode.isdigit():
+        if zipcode is not None and zipcode != "" and len(zipcode) == 5 and zipcode.isdigit():
             return True
         else:
             return False
+
+    @property
+    def orders(self):
+        return Order.query.filter(Order.zip_id == self.id)
+
+    @orders.setter
+    def orders(self, orders):
+        raise AttributeError('orders is not a writable attribute')
 
 
 class MealZipcode(db.Model):
@@ -200,9 +272,9 @@ class MealZipcode(db.Model):
     end_date = db.Column(db.Date, default=db.func.now())
     create_date = db.Column(db.DateTime, default=db.func.now())
     zipcode = db.relationship(Zipcode,
-                               backref=db.backref('meal_zipcodes',
-                                                  cascade='all, delete-orphan')
-                               )
+                              backref=db.backref('meal_zipcodes',
+                                                 cascade='all, delete-orphan')
+                              )
     meal = db.relationship(Meal,
-                            backref=db.backref('meal_zipcodes',
-                                               cascade='all, delete-orphan'))
+                           backref=db.backref('meal_zipcodes',
+                                              cascade='all, delete-orphan'))

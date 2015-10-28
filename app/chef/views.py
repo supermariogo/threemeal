@@ -32,7 +32,7 @@ def meal_create():
         zipcodes = form.zipcodes.data
         meal = Meal(name=form.name.data,
                     description=form.description.data,
-                    chef=current_user._get_current_object())
+                    chef_id=current_user.id)
         zips = Zipcode.add_zips(zipcodes.split(','))
         db.session.add(meal)
         db.session.commit()
