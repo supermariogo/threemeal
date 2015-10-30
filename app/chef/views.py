@@ -1,11 +1,32 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, redirect, url_for, abort, flash
+from flask import render_template, redirect, url_for, abort, flash, request
 from flask_login import login_required, current_user
 from . import chef
-from .forms import MealEditForm, ChefOrderEditForm
+from .forms import MealEditForm, ChefOrderEditForm, ChefApplyForm
 from .. import db
-from ..models import Meal, Zipcode, MealZipcode, Order
+from ..models import Meal, Zipcode, MealZipcode, Order, Role, ChefApply
+
+
+@chef.before_app_first_request
+def insert_chef_role():
+    chef_role = Role.query.filter_by(name='chef').first()
+    if not chef_role:
+        Role.add(Role(name='chef'))
+
+
+@chef.before_request
+def before_request():
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+    if not current_user.has_role('chef') and \
+                    request.endpoint != 'chef.chef_apply' and \
+                    request.endpoint != 'chef.chef_apply_status':
+        chefApply = ChefApply.query.filter_by(applicant_id=current_user.id) \
+            .first()
+        if chefApply:
+            return redirect(url_for('chef.chef_apply_status', id=chefApply.id))
+        return redirect(url_for('chef.chef_apply'))
 
 
 @chef.route('/')
@@ -14,12 +35,36 @@ def index():
     return render_template('chef/chef_base.html')
 
 
+@chef.route('/apply', methods=['GET', 'POST'])
+@login_required
+def chef_apply():
+    form = ChefApplyForm()
+    if form.validate_on_submit():
+        chefApply = ChefApply(applicant_id=current_user.id,
+                              content=form.content.data,
+                              status='waiting')
+        db.session.add(chefApply)
+        db.session.commit()
+        return redirect(url_for('chef.chef_apply_status', id=chefApply.id))
+    print('chef_apply')
+    return render_template('chef/chef_apply.html', form=form)
+
+
+@chef.route('/apply/<int:id>/status')
+@login_required
+def chef_apply_status(id):
+    chefApply = ChefApply.query.get_or_404(id)
+    if not (chefApply.applicant_id == current_user.id or
+                current_user.has_role('admin')):
+        abort(403)
+    return render_template('chef/chef_apply_status.html', apply=chefApply)
+
+
 @chef.route('/meal_list')
 @login_required
 def meal_list():
     """meal列表"""
     meals = Meal.query.filter_by(chef_id=current_user.id).order_by(Meal.id.desc())
-    print(meals)
     return render_template('chef/meal_list.html', meals=meals)
 
 
@@ -60,10 +105,10 @@ def meal_edit(id):
         meal.description = form.description.data
         # update the begin and end date
         for meal_zipcode in meal.meal_zipcodes:
-            meal_zipcode.begin_date=form.begin_date.data
+            meal_zipcode.begin_date = form.begin_date.data
             meal_zipcode.end_date = form.end_date.data
         zips = Zipcode.add_zips(form.zipcodes.data.split(','))
-        while(len(meal.meal_zipcodes) > 0):
+        while (len(meal.meal_zipcodes) > 0):
             meal.meal_zipcodes.pop()
         print(meal.meal_zipcodes)
         # create new MealZipcode

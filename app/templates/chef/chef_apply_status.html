@@ -1,0 +1,34 @@
+{% extends 'chef/chef_base.html'%}
+
+{% block head_files %}
+
+<!-- include codemirror (codemirror.css, codemirror.js, xml.js, formatting.js) -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.css"/>
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.min.css"/>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.min.js"></script>
+
+{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">申请详情</div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    Apply Content:
+                    <div><p>{{apply.content|safe}}</p></div>
+                </li>
+                <li class="list-group-item">
+                    Apply Time:{{apply.create_time.strftime('%Y-%m-%d %H:%M:%S')}}
+                </li>
+                <li class="list-group-item">
+                    Apply Status:{{apply.status}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

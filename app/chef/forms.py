@@ -23,3 +23,8 @@ class ChefOrderEditForm(Form):
     def __init__(self, *args, **kwargs):
         super(ChefOrderEditForm, self).__init__(*args, **kwargs)
         self.status.choices = [('HANDLED', u'发货'), ('CANCELED', u'取消订单')]
+
+
+class ChefApplyForm(Form):
+    content = TextAreaField(validators=[DataRequired()])
+

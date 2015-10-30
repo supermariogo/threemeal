@@ -1,0 +1,48 @@
+{% extends 'chef/chef_base.html' %}
+
+{% block head_files %}
+
+<!-- include codemirror (codemirror.css, codemirror.js, xml.js, formatting.js) -->
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.css"/>
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.min.css"/>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.min.js"></script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.6.16/summernote.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.6.16/summernote.min.js"></script>
+{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading">Chef Apply</div>
+        <div class="panel-body">
+            <form action="" method="post" accept-charset="utf-8">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <textarea class="form-control" id="content" name="content" autocomplete="off">{{ form.content.data or '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script_files %}
+<script>
+    $(document).ready(function () {
+        $('#content').summernote(
+                {
+                    height: 300,   //set editable area's height
+
+                    codemirror: { // codemirror options
+                        theme: 'monokai'
+                    }
+                });
+    });
+</script>
+
+{% endblock %}
