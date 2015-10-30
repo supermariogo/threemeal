@@ -94,6 +94,11 @@ class Role(db.Model, RoleMixin):
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def add(role):
+        db.session.add(role)
+        db.session.commit()
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -195,6 +200,35 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class ChefApply(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    applicant_id = db.Column(db.Integer())
+    content = db.Column(db.Text)
+    create_time = db.Column(db.DateTime, default=db.func.now())
+    status = db.Column(db.Enum('waiting', 'refused', 'approved'))
+    update_time = db.Column(db.DateTime, default=db.func.now())
+    admin_id = db.Column(db.Integer())
+
+    @property
+    def applicant(self):
+        return User.query.get_or_404(self.applicant_id)
+
+    @applicant.setter
+    def applicant(self, applicant):
+        self.applicant_id = applicant.id
+
+    @property
+    def admin(self):
+        return User.query.get_or_404(self.admin_id)
+
+    @admin.setter
+    def admin(self, admin):
+        if admin.has_role('admin'):
+            self.admin_id = admin.id
+        else:
+            raise ValueError('The user has not the admin role')
 
 
 class Meal(db.Model):
