@@ -1,4 +1,4 @@
-{% extends 'chef/chef_base.html'%}
+{% extends 'base.html'%}
 
 {% block head_files %}
 
@@ -11,23 +11,36 @@
 
 {% endblock %}
 
-{% block admin_content %}
-<div class="row">
-    <div>
-        <div class="panel panel-default">
-            <div class="panel-heading">申请详情</div>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    Apply Content:
-                    <div><p>{{apply.content|safe}}</p></div>
-                </li>
-                <li class="list-group-item">
-                    Apply Time:{{apply.create_time.strftime('%Y-%m-%d %H:%M:%S')}}
-                </li>
-                <li class="list-group-item">
-                    Apply Status:{{apply.status}}
-                </li>
-            </ul>
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">申请详情</div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Apply Content:
+                        <div><p>{{apply.content|safe}}</p></div>
+                    </li>
+                    <li class="list-group-item">
+                        Apply Time:{{apply.create_time.strftime('%Y-%m-%d %H:%M:%S')}}
+                    </li>
+                    <li class="list-group-item">
+                        Apply Status:{{apply.status}}
+                    </li>
+                    <li class="list-group-item">
+                        {% if current_user.has_role('superuser') %}
+                        {% if apply.status == 'waiting' %}
+                        <a href="#" class="btn btn-primary">批准</a> <a href="#" class="btn btn-danger">拒绝</a>
+                        {% elif apply.status == 'approved' %}
+                        <a href="#" class="btn btn-danger">拒绝</a>
+                        {% elif apply.status == 'refused' %}
+                        <a href="#" class="btn btn-primary">批准</a>
+                        {% endif %}
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
