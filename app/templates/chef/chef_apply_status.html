@@ -31,11 +31,11 @@
                     <li class="list-group-item">
                         {% if current_user.has_role('superuser') %}
                         {% if apply.status == 'waiting' %}
-                        <a href="#" class="btn btn-primary">批准</a> <a href="#" class="btn btn-danger">拒绝</a>
+                        <a href="{{url_for('admin.apply_approve', id=apply.id)}}" class="btn btn-primary">批准</a> <a href="{{url_for('admin.apply_refuse', id=apply.id)}}" class="btn btn-danger">拒绝</a>
                         {% elif apply.status == 'approved' %}
-                        <a href="#" class="btn btn-danger">拒绝</a>
+                        <a href="{{url_for('admin.apply_refuse', id=apply.id)}}" class="btn btn-danger">拒绝</a>
                         {% elif apply.status == 'refused' %}
-                        <a href="#" class="btn btn-primary">批准</a>
+                        <a href="{{url_for('admin.apply_approve', id=apply.id)}}" class="btn btn-primary">批准</a>
                         {% endif %}
                         {% endif %}
                     </li>

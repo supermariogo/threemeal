@@ -11,6 +11,7 @@ from flask_security.core import AnonymousUserMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from . import db, login_manager
+from .decorators import superuser_required
 
 
 def get_or_create(session, model, **kwargs):
@@ -224,11 +225,9 @@ class ChefApply(db.Model):
         return User.query.get_or_404(self.admin_id)
 
     @admin.setter
+    @superuser_required
     def admin(self, admin):
-        if admin.has_role('admin'):
-            self.admin_id = admin.id
-        else:
-            raise ValueError('The user has not the admin role')
+        self.admin_id = admin.id
 
 
 class Meal(db.Model):
