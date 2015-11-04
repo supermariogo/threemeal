@@ -2,13 +2,16 @@
 
 import hashlib
 import urllib
+import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app, flash
 from flask_security import UserMixin, RoleMixin
 from flask_security.core import AnonymousUserMixin
 from sqlalchemy.ext.associationproxy import association_proxy
+import boto
+from boto.s3.key import Key
 
 from . import db, login_manager
 from .decorators import superuser_required
@@ -311,3 +314,62 @@ class MealZipcode(db.Model):
     meal = db.relationship(Meal,
                            backref=db.backref('meal_zipcodes',
                                               cascade='all, delete-orphan'))
+
+
+class S3file(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime)
+    filename = db.Column(db.String(128))
+    user_id = db.Column(db.String(36))
+    url = db.Column(db.String)
+    #s3_key = str(timestamp)+file_name
+
+    @staticmethod
+    def files2s3(data_files, path=""):
+        s3file_list = []
+        if data_files is None or len(data_files) == 0:
+            return s3file_list
+        if data_files[0].filename == "" or data_files[0].filename is None:
+            return s3file_list
+        s3 = boto.connect_s3()
+        # Get a handle to the S3 bucket
+        bucket_name = 'xuebacarrybucket'
+        bucket = s3.get_bucket(bucket_name)
+        k = Key(bucket)
+
+        # Loop over the list of files from the HTML input control
+        for data_file in data_files:
+            s3file = S3file(filename=data_file.filename, timestamp=datetime.datetime.utcnow())
+
+            k.key = path + s3file.timestamp.strftime("%Y-%m-%d-%H-%M-%S-")+s3file.filename
+            print k.key
+            # Read the contents of the file
+            content = data_file.read()
+            if len(content) < current_app.config['MAX_CONTENT_LENGTH']:
+                k.set_contents_from_string(content)
+                s3file.url = k.generate_url(expires_in=0, query_auth=False, force_http=True)
+                s3file.fail_reason = None
+            else:
+                s3file.fail_reason = u"文件超过10MB"
+            s3file_list.append(s3file)
+            print "upaload to s3 " + s3file.filename
+        s3.close()
+        return s3file_list
+
+    @staticmethod
+    def files_meta2db(s3file_list, project_id, application_id):
+        if len(s3file_list) == 0:
+            return False
+        for s3file in s3file_list:
+            if s3file.fail_reason != None:
+                flash(s3file.filename + u' 上传失败: ' + s3file.fail_reason, 'error')
+            else:
+                flash(s3file.filename + u' 上传成功', 'info')
+                s3file.project_id = project_id
+                s3file.application_id = application_id
+                db.session.add(s3file)
+
+        if len(s3file_list) > 0:
+            db.session.commit()
+
+        return True
