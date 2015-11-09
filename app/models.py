@@ -232,6 +232,10 @@ class ChefApply(db.Model):
     def admin(self, admin):
         self.admin_id = admin.id
 
+    @property
+    def files(self):
+        return S3file.query.filter_by(model_id=self.id).order_by(S3file.timestamp.desc()).all()
+
 
 class Meal(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -322,27 +326,35 @@ class S3file(db.Model):
     filename = db.Column(db.String(128))
     user_id = db.Column(db.String(36))
     url = db.Column(db.String)
-    #s3_key = str(timestamp)+file_name
+    model_id = db.Column(db.Integer)
 
     @staticmethod
     def files2s3(data_files, path=""):
+        """
+        store files to Amazon S3
+        :param data_files: file list
+        :param path: the file path in Amazon S3
+        :return: file list in Amazon S3
+        """
         s3file_list = []
         if data_files is None or len(data_files) == 0:
             return s3file_list
         if data_files[0].filename == "" or data_files[0].filename is None:
             return s3file_list
-        s3 = boto.connect_s3()
+        # connect to s3
+        s3 = boto.connect_s3(current_app.config['AWS_ACCESS_KEY_ID'],
+                             current_app.config['AWS_SECRET_ACCESS_KEY'])
         # Get a handle to the S3 bucket
-        bucket_name = 'xuebacarrybucket'
-        bucket = s3.get_bucket(bucket_name)
+        bucket_name = 'threemealbucket'
+        bucket = s3.lookup(bucket_name, validate=False)
+        if bucket is None:
+            bucket = s3.create_bucket(bucket_name)
         k = Key(bucket)
-
         # Loop over the list of files from the HTML input control
         for data_file in data_files:
             s3file = S3file(filename=data_file.filename, timestamp=datetime.datetime.utcnow())
 
             k.key = path + s3file.timestamp.strftime("%Y-%m-%d-%H-%M-%S-")+s3file.filename
-            print k.key
             # Read the contents of the file
             content = data_file.read()
             if len(content) < current_app.config['MAX_CONTENT_LENGTH']:
@@ -357,16 +369,21 @@ class S3file(db.Model):
         return s3file_list
 
     @staticmethod
-    def files_meta2db(s3file_list, project_id, application_id):
+    def files_meta2db(s3file_list, model_instance):
+        """
+        store the files info to the database
+        :param s3file_list: s3 files
+        :param model_instance: model instance which own the files
+        :return: boolean
+        """
         if len(s3file_list) == 0:
             return False
         for s3file in s3file_list:
             if s3file.fail_reason != None:
-                flash(s3file.filename + u' 上传失败: ' + s3file.fail_reason, 'error')
+                flash(s3file.filename + u'上传失败: ' + s3file.fail_reason, 'error')
             else:
-                flash(s3file.filename + u' 上传成功', 'info')
-                s3file.project_id = project_id
-                s3file.application_id = application_id
+                flash(s3file.filename + u'上传成功', 'info')
+                s3file.model_id = model_instance.id
                 db.session.add(s3file)
 
         if len(s3file_list) > 0:

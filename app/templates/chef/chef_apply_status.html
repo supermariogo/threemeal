@@ -29,6 +29,11 @@
                         Apply Status:{{apply.status}}
                     </li>
                     <li class="list-group-item">
+                        {% for file in apply.files %}
+                        <a href="{{file.url}}">{{file.filename}}</a>
+                        {% endfor %}
+                    </li>
+                    <li class="list-group-item">
                         {% if current_user.has_role('superuser') %}
                         {% if apply.status == 'waiting' %}
                         <a href="{{url_for('admin.apply_approve', id=apply.id)}}" class="btn btn-primary">批准</a> <a href="{{url_for('admin.apply_refuse', id=apply.id)}}" class="btn btn-danger">拒绝</a>

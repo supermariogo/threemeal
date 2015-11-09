@@ -19,11 +19,18 @@
     <div class="panel panel-default">
         <div class="panel-heading">Chef Apply</div>
         <div class="panel-body">
-            <form action="" method="post" accept-charset="utf-8">
+            <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     <textarea class="form-control" id="content" name="content" autocomplete="off">{{ form.content.data or '' }}</textarea>
                 </div>
+                <div class="form-group">
+                    <span class="btn btn-danger btn-file">
+                    上传文件(可多选)
+                    <input class="form-control" id="apply_files" multiple="" name="apply_files" type="file">
+                    </span>
+                </div>
+                <div id="selectedFiles"></div>
                 <button type="submit" class="btn btn-primary">保存</button>
             </form>
         </div>
@@ -44,5 +51,22 @@
                 });
     });
 </script>
+<script>
+var selDiv = "";
+document.addEventListener("DOMContentLoaded", init, false);
+function init() {
+    document.querySelector('#apply_files').addEventListener('change', handleFileSelect, false);
+    selDiv = document.querySelector("#selectedFiles");
+}
 
+function handleFileSelect(e) {
+    if(!e.target.files) return;
+    selDiv.innerHTML = "";
+    var files = e.target.files;
+    for(var i=0; i<files.length; i++) {
+        var f = files[i];
+        selDiv.innerHTML +=  '<span class="label label-success">' + f.name + '</span> ';
+    }
+}
+</script>
 {% endblock %}

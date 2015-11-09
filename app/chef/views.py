@@ -1,11 +1,11 @@
 # -*- coding:utf-8 -*-
 
-from flask import render_template, redirect, url_for, abort, flash, request
+from flask import render_template, redirect, url_for, abort, flash, request, jsonify
 from flask_login import login_required, current_user
 from . import chef
 from .forms import MealEditForm, ChefOrderEditForm, ChefApplyForm
 from .. import db
-from ..models import Meal, Zipcode, MealZipcode, Order, Role, ChefApply
+from ..models import Meal, Zipcode, MealZipcode, Order, Role, ChefApply, S3file
 
 
 @chef.before_app_first_request
@@ -45,8 +45,9 @@ def chef_apply():
                               status='waiting')
         db.session.add(chefApply)
         db.session.commit()
+        s3file_list = S3file.files2s3(request.files.getlist("apply_files"), "chef_apply_files/")
+        S3file.files_meta2db(s3file_list, chefApply)
         return redirect(url_for('chef.chef_apply_status', id=chefApply.id))
-    print('chef_apply')
     return render_template('chef/chef_apply.html', form=form)
 
 
@@ -55,7 +56,7 @@ def chef_apply():
 def chef_apply_status(id):
     chefApply = ChefApply.query.get_or_404(id)
     if not (chefApply.applicant_id == current_user.id or
-                current_user.has_role('admin')):
+                current_user.has_role('superuser')):
         abort(403)
     return render_template('chef/chef_apply_status.html', apply=chefApply)
 

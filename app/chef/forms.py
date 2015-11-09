@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, BooleanField, TextAreaField, SelectField
+from wtforms import StringField, TextAreaField, SelectField, FileField
 from wtforms.fields.html5 import EmailField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, \
     ValidationError
@@ -27,4 +27,5 @@ class ChefOrderEditForm(Form):
 
 class ChefApplyForm(Form):
     content = TextAreaField(validators=[DataRequired()])
+    files = FileField('apply_files')
 

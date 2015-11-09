@@ -11,6 +11,11 @@ class Config:
     MAIL_SENDER = 'Three Meal Admin<admin@threemeal.com>'
     THREEMEAL_ADMIN = os.environ.get('THREEMEAL_ADMIN') or '550488300@qq.com'
     THREEMEAL_ADMIN_PWD = os.environ.get('THREEMEAL_ADMIN_PWD') or '123456'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    # s3 max file size
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB max
+    ALLOWED_EXTENSIONS = set(['txt', 'doc', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip'])
 
     @staticmethod
     def init_app(app):
